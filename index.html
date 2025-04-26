@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الحبليات - معمل افتراضي (تصميم ورسوم محسنة)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-chordate: #f59e0b; /* Amber */
+            --color-vertebrate: #84cc16; /* Lime */
+            --color-temp: #a855f7; /* Purple */
+            --color-fish: #3b82f6; /* Blue */
+            --color-amphibian: #10b981; /* Emerald */
+            --color-reptile: #ef4444; /* Red */
+            --color-quiz: #6b7280; /* Gray */
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f0f9ff; /* Light sky blue background */
+        }
+        /* Styling for section cards */
+        .section-card {
+            background-color: white;
+            border-radius: 1rem; /* Even more rounded corners */
+            box-shadow: 0 4px 10px -2px rgb(0 0 0 / 0.1), 0 2px 6px -2px rgb(0 0 0 / 0.08); /* Slightly softer shadow */
+            margin-bottom: 2.5rem; /* Increased spacing */
+            padding: 2rem; /* Increased padding */
+            border-top: 6px solid; /* Thicker colored top border */
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            overflow: hidden; /* Prevent content overflow */
+        }
+        .section-card:hover {
+             box-shadow: 0 12px 20px -4px rgb(0 0 0 / 0.1), 0 5px 8px -5px rgb(0 0 0 / 0.1); /* Enhanced shadow on hover */
+             transform: translateY(-3px); /* Slight lift on hover */
+        }
+
+        /* Section header styling */
+        .section-header {
+            font-size: 2rem; /* Larger header */
+            font-weight: 700;
+            margin-bottom: 1.5rem; /* Increased margin */
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        /* Info panel styling */
+        .info-panel {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out, transform 0.3s ease;
+            transform: translateX(15px); /* Start slightly to the right */
+            border: 1px solid #e0e7ff; /* Lighter indigo border */
+            border-right: 5px solid; /* Thicker colored right border */
+            padding: 1.25rem; /* Increased padding */
+            margin-top: 1rem;
+            border-radius: 0.75rem;
+            background-color: #f5f8ff; /* Very light blue/gray background */
+        }
+        .info-panel.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0); /* Move to final position */
+        }
+        .info-panel h4 {
+            font-size: 1.1rem; /* Slightly larger info panel heading */
+            margin-bottom: 0.5rem;
+        }
+
+        /* Interactive element styling */
+        .interactive-element {
+            cursor: pointer;
+            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+            border-bottom: 3px dotted; /* Thicker dotted underline */
+            font-weight: 600;
+            padding: 2px 4px; /* Add slight padding */
+            border-radius: 4px; /* Slightly rounded background on hover */
+        }
+        .interactive-element:hover {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            border-color: #0369a1 !important; /* Ensure border color changes on hover */
+        }
+
+        /* SVG Diagram Styling */
+        .svg-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem 0; /* Add padding around SVG */
+        }
+        .svg-diagram {
+            width: 100%;
+            /* Increased max-width for larger diagrams */
+            max-width: 450px;
+            height: auto;
+            border: none;
+            display: block;
+        }
+        .svg-part {
+            cursor: pointer;
+            transition: fill 0.2s ease, filter 0.2s ease, transform 0.2s ease;
+            stroke-width: 1; /* Add subtle stroke */
+            stroke: rgba(0,0,0,0.1); /* Subtle stroke color */
+        }
+        .svg-part:hover {
+            filter: brightness(0.9);
+            transform: scale(1.04); /* Slightly more enlarge on hover */
+            stroke: rgba(0,0,0,0.3);
+        }
+        .svg-text {
+            font-size: 12px; /* Larger text */
+            font-family: 'Cairo', sans-serif;
+            text-anchor: middle;
+            pointer-events: none;
+            fill: #1f2937; /* Darker gray text */
+            font-weight: 600;
+        }
+         /* Style for SVG labels/pointers */
+        .svg-label-line {
+            stroke: #6b7280; /* Gray */
+            stroke-width: 1px;
+            stroke-dasharray: 2, 2; /* Dashed line */
+        }
+        .svg-label-text {
+             font-size: 10px;
+             fill: #4b5563; /* Medium gray */
+             text-anchor: middle;
+        }
+
+        /* Specific Section Colors */
+        .border-color-chordate { border-color: var(--color-chordate); }
+        .border-color-vertebrate { border-color: var(--color-vertebrate); }
+        .border-color-temp { border-color: var(--color-temp); }
+        .border-color-fish { border-color: var(--color-fish); }
+        .border-color-amphibian { border-color: var(--color-amphibian); }
+        .border-color-reptile { border-color: var(--color-reptile); }
+        .border-color-quiz { border-color: var(--color-quiz); }
+
+        /* Quiz section styling */
+        .quiz-question {
+            background-color: #f8fafc; /* Slightly lighter background */
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.25rem;
+            border-left: 5px solid var(--color-quiz);
+        }
+        .toggle-answer {
+             display: inline-block;
+             margin-top: 0.75rem;
+             padding: 0.35rem 1rem; /* Slightly larger button */
+             background-color: var(--color-fish); /* Use fish blue for button */
+             color: white;
+             border-radius: 0.5rem;
+             font-size: 0.9rem;
+             font-weight: 600;
+             transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+        .toggle-answer:hover {
+            background-color: #2563eb;
+            transform: scale(1.03);
+        }
+        .answer {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f3f4f6; /* Slightly darker gray background for answer */
+            border-radius: 0.5rem;
+            color: #374151;
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, padding 0.5s ease, margin 0.5s ease;
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            border-left: 3px solid var(--color-quiz);
+        }
+        .answer:not(.hidden) {
+             max-height: 150px; /* Allow more height */
+             opacity: 1;
+             padding-top: 1rem;
+             padding-bottom: 1rem;
+             margin-top: 1rem;
+        }
+
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <header class="text-center mb-16"> <h1 class="text-4xl md:text-5xl font-bold text-sky-900 mb-3">الحبليات</h1>
+        <p class="text-xl text-gray-700">معلم المادة: علي جبريل</p>
+        <p class="text-gray-600 mt-5 max-w-3xl mx-auto leading-relaxed"> مرحباً بك في المعمل الافتراضي المحسّن للحبليات! استكشف الخصائص والمجموعات المختلفة برسوم توضيحية أكبر وأكثر وضوحًا. انقر على العناصر التفاعلية (الكلمات المنقطة أو أجزاء الرسوم) لمعرفة المزيد.
+        </p>
+    </header>
+
+    <main class="container mx-auto max-w-7xl"> <section class="section-card border-color-chordate">
+            <h2 class="section-header text-amber-700">1. خصائص الحبليات العامة</h2>
+            <p class="mb-8 text-gray-700"> تتميز الحبليات بخصائص مشتركة رئيسة تظهر في مرحلة ما من نموها. استكشف هذه الخصائص بالنقر على الرسم التوضيحي أو القائمة أدناه:
+            </p>
+            <div class="flex flex-col lg:flex-row items-start gap-10"> <div class="w-full lg:w-2/5 svg-container"> <svg viewBox="0 0 350 200" class="svg-diagram"> <title>رسم تخطيطي مكبر لحبلي نموذجي</title>
+                        <path d="M 30 100
+                                 C 50 40, 300 40, 320 100
+                                 C 300 160, 50 160, 30 100 Z"
+                              fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
+
+                        <rect data-target="info-notochord" class="svg-part interactive-element"
+                              x="50" y="97" width="250" height="8" fill="#fcd34d" rx="4" />
+                        <text class="svg-text" x="175" y="90" fill="#b45309">الحبل الظهري</text>
+
+                        <rect data-target="info-nerve-cord" class="svg-part interactive-element"
+                              x="50" y="82" width="250" height="8" fill="#a7f3d0" rx="4" />
+                        <text class="svg-text" x="175" y="75" fill="#047857">الحبل العصبي الظهري المجوف</text>
+
+                        <g data-target="info-pharyngeal-slits" class="svg-part interactive-element" fill="#fecaca">
+                            <rect x="70" y="115" width="8" height="20" rx="3"/>
+                            <rect x="85" y="115" width="8" height="20" rx="3"/>
+                            <rect x="100" y="115" width="8" height="20" rx="3"/>
+                        </g>
+                        <line class="svg-label-line" x1="85" y1="135" x2="85" y2="155" />
+                        <text class="svg-label-text" x="85" y="165">الشقوق البلعومية</text>
+
+                        <path data-target="info-tail" class="svg-part interactive-element"
+                              d="M 320 100 C 340 85, 350 100, 340 115 C 330 110, 320 100, 320 100 Z"
+                              fill="#e0e7ff" stroke="#4f46e5" stroke-width="1.5"/>
+                        <line class="svg-label-line" x1="330" y1="115" x2="330" y2="135" />
+                        <text class="svg-label-text" x="330" y="145">الذيل خلف الشرج</text>
+                    </svg>
+                </div>
+                <div class="w-full lg:w-3/5"> <ul class="space-y-3 mb-6"> <li><span class="interactive-element border-color-chordate" data-target="info-notochord">الحبل الظهري</span></li>
+                        <li><span class="interactive-element border-color-chordate" data-target="info-nerve-cord">الحبل العصبي الظهري المجوف</span></li>
+                        <li><span class="interactive-element border-color-chordate" data-target="info-pharyngeal-slits">الشقوق البلعومية</span></li>
+                        <li><span class="interactive-element border-color-chordate" data-target="info-tail">الذيل خلف الشرج</span></li>
+                    </ul>
+                    <div id="info-display-chordate" class="space-y-3"> <div id="info-notochord" class="info-panel border-color-chordate">
+                            <h4 class="font-bold text-amber-800">الحبل الظهري:</h4>
+                            <p>قضيب مرن وقوي يمتد على طول الجسم، يوفر الدعم الهيكلي الأولي. في معظم الفقاريات، يُستبدل جزئياً أو كلياً بالعمود الفقري المكون من فقرات.</p>
+                        </div>
+                        <div id="info-nerve-cord" class="info-panel border-color-chordate">
+                            <h4 class="font-bold text-amber-800">الحبل العصبي الظهري المجوف:</h4>
+                            <p>أنبوب عصبي يقع على الجانب الظهري (العلوي) للجسم، فوق الحبل الظهري. يتطور إلى الجهاز العصبي المركزي (الدماغ والحبل الشوكي) في الفقاريات.</p>
+                        </div>
+                         <div id="info-pharyngeal-slits" class="info-panel border-color-chordate">
+                            <h4 class="font-bold text-amber-800">الشقوق البلعومية:</h4>
+                            <p>سلسلة من الفتحات أو الجيوب في منطقة البلعوم (الجزء الخلفي من الحلق). في الحبليات المائية البدائية والأسماك، تتطور إلى خياشيم للتنفس. في الفقاريات الأرضية، تتعدل لتكوين هياكل أخرى في الرأس والرقبة والأذن.</p>
+                        </div>
+                         <div id="info-tail" class="info-panel border-color-chordate">
+                            <h4 class="font-bold text-amber-800">الذيل خلف الشرج:</h4>
+                             <p>امتداد للجسم يقع خلف فتحة الشرج. يحتوي على عضلات وعناصر هيكلية (مثل الحبل الظهري أو الفقرات) ويستخدم بشكل أساسي للحركة والدفع في الماء لدى العديد من الحبليات. قد يضمر أو يختفي في بعض المجموعات (مثل الإنسان).</p>
+                        </div>
+                    </div>
+                     <p class="mt-8 text-sm text-gray-600"> تنقسم الحبليات إلى ثلاث مجموعات رئيسة: <span class="interactive-element border-color-chordate" data-target="info-vertebrate-group">الفقاريات</span>، السهيمات، والكيسيات.
+                     </p>
+                     <div id="info-vertebrate-group" class="info-panel border-color-chordate">
+                        <h4 class="font-bold text-amber-800">مجموعات الحبليات:</h4>
+                        <p><b>الفقاريات:</b> المجموعة الأكبر والأكثر تنوعاً، تتميز بوجود عمود فقري وهيكل داخلي متطور. <b>السهيمات (مثل الأمفيوكسوس) والكيسيات (مثل بخاخات البحر):</b> مجموعات بحرية أبسط تحتفظ ببعض أو كل خصائص الحبليات في مرحلة البلوغ أو اليرقة، ولكنها لا تمتلك عموداً فقرياً حقيقياً.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-card border-color-vertebrate">
+            <h2 class="section-header text-lime-700">2. الفقاريات</h2>
+            <p class="text-gray-700">الفقاريات هي المجموعة الأكثر تطوراً ضمن الحبليات، وتتميز بوجود <span class="interactive-element border-color-vertebrate" data-target="info-backbone">عمود فقري</span> يحل محل الحبل الظهري (في الغالب) ويوفر دعماً وحماية أفضل، بالإضافة إلى <span class="interactive-element border-color-vertebrate" data-target="info-internal-skeleton">هيكل داخلي</span> متطور.</p>
+            <div id="info-display-vertebrate" class="mt-6 space-y-3">
+                <div id="info-backbone" class="info-panel border-color-vertebrate">
+                    <h4 class="font-bold text-lime-800">العمود الفقري:</h4>
+                    <p>سلسلة من القطع العظمية أو الغضروفية تسمى الفقرات، تتصل ببعضها لتشكل محوراً مركزياً مرناً وقوياً يدعم الجسم ويحمي الحبل الشوكي الذي يمر بداخله.</p>
+                </div>
+                <div id="info-internal-skeleton" class="info-panel border-color-vertebrate">
+                    <h4 class="font-bold text-lime-800">الهيكل الداخلي:</h4>
+                    <p>يتكون من العمود الفقري، الجمجمة (التي تحمي الدماغ)، والأطراف (إن وجدت)، والأحزمة الصدرية والحوضية التي تربط الأطراف بالعمود الفقري. يوفر الدعم، الحماية للأعضاء الداخلية، نقاط ارتكاز للعضلات للحركة، ويساهم في إنتاج خلايا الدم (في نخاع العظم).</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-card border-color-temp">
+             <h2 class="section-header text-purple-700">3. تنظيم درجة الحرارة</h2>
+             <p class="text-gray-700">يمكن تصنيف الفقاريات بناءً على كيفية تنظيم درجة حرارة أجسامها:</p>
+             <ul class="list-none mt-6 space-y-3">
+                 <li class="flex items-start"><span class="font-bold text-purple-600 ml-2">🌡️</span> <span class="interactive-element border-color-temp" data-target="info-variable-temp">الحيوانات متغيرة درجة الحرارة</span></li>
+                 <li class="flex items-start"><span class="font-bold text-red-600 ml-2">🔥</span> <span class="interactive-element border-color-temp" data-target="info-constant-temp">الحيوانات ثابتة درجة الحرارة</span></li>
+             </ul>
+             <div id="info-display-temp" class="mt-6 space-y-3">
+                 <div id="info-variable-temp" class="info-panel border-color-temp">
+                     <h4 class="font-bold text-purple-800">متغيرة درجة الحرارة (ذوات الدم البارد):</h4>
+                     <p>تعتمد بشكل أساسي على مصادر الحرارة الخارجية (مثل الشمس) لتنظيم درجة حرارة أجسامها. درجة حرارتها الداخلية تتقلب مع تغير درجة حرارة البيئة. تحتاج إلى سلوكيات مثل التشمس أو البحث عن الظل للحفاظ على درجة حرارة مناسبة لنشاطها. أمثلة: الأسماك، البرمائيات، الزواحف.</p>
+                 </div>
+                 <div id="info-constant-temp" class="info-panel border-color-temp">
+                     <h4 class="font-bold text-purple-800">ثابتة درجة الحرارة (ذوات الدم الحار):</h4>
+                     <p>تنتج حرارتها الداخلية بنفسها من خلال عمليات الأيض وتحافظ على درجة حرارة جسم ثابتة ومستقرة نسبياً بغض النظر عن درجة حرارة البيئة المحيطة. هذا يسمح لها بالنشاط في نطاق أوسع من درجات الحرارة. أمثلة: الطيور، الثدييات.</p>
+                 </div>
+             </div>
+        </section>
+
+        <section class="section-card border-color-fish">
+            <h2 class="section-header text-blue-700">4. الأسماك</h2>
+            <p class="text-gray-700 mb-8">أكبر مجموعات الفقاريات، وهي حيوانات مائية <span class="interactive-element border-color-fish" data-target="info-fish-temp">متغيرة درجة الحرارة</span> تتنفس بالأكسجين المذاب في الماء. لديها تكيفات رائعة للبيئة المائية:</p>
+             <div class="flex flex-col lg:flex-row items-start gap-10">
+                 <div class="w-full lg:w-1/2 svg-container">
+                     <svg viewBox="0 0 250 150" class="svg-diagram">
+                         <title>رسم تخطيطي مكبر لسمكة</title>
+                         <path d="M 20 75 Q 60 30 125 50 T 230 75 Q 180 120 125 100 T 20 75 Z" fill="#e0f2fe" stroke="#3b82f6" stroke-width="1.5"/>
+                         <circle cx="50" cy="65" r="5" fill="#ffffff" stroke="#374151" stroke-width="1"/>
+                         <circle cx="50" cy="65" r="2" fill="#1f2937"/>
+                         <path d="M 30 78 Q 40 85 50 78" stroke="#60a5fa" stroke-width="1" fill="none"/>
+                         <path d="M 70 60 C 85 55, 90 95, 70 90 L 65 75 Z" fill="#bfdbfe" stroke="#60a5fa" stroke-width="1" />
+                         <g class="svg-part interactive-element" data-target="info-gills" fill="#fda4af">
+                             <path d="M 72 65 C 77 63, 77 87, 72 85" stroke="#f43f5e" stroke-width="0.5" fill="none"/>
+                             <path d="M 75 65 C 80 63, 80 87, 75 85" stroke="#f43f5e" stroke-width="0.5" fill="none"/>
+                         </g>
+                         <text class="svg-text" x="80" y="105" fill="#be123c">الخياشيم</text>
+                         <g class="svg-part interactive-element" data-target="info-fins">
+                             <path d="M 110 48 Q 130 30 150 48 L 145 52 Q 130 40 115 52 Z" fill="#93c5fd" stroke="#60a5fa" stroke-width="0.5"/>
+                             <path d="M 80 80 Q 100 75 100 90 Z" fill="#93c5fd" stroke="#60a5fa" stroke-width="0.5"/>
+                             <path d="M 130 102 Q 140 115 150 102 Z" fill="#93c5fd" stroke="#60a5fa" stroke-width="0.5"/>
+                             <path d="M 210 75 Q 240 50 240 100 Q 210 75 Z" fill="#93c5fd" stroke="#60a5fa" stroke-width="0.5"/>
+                         </g>
+                         <text class="svg-text" x="130" y="25" fill="#1d4ed8">الزعانف</text>
+                         <g class="svg-part interactive-element" data-target="info-scales" fill="#dbeafe" stroke="#93c5fd" stroke-width="0.5">
+                            <path d="M 100 70 C 103 68 106 68 109 70 L 104.5 74 Z" />
+                            <path d="M 110 75 C 113 73 116 73 119 75 L 114.5 79 Z" />
+                            <path d="M 120 70 C 123 68 126 68 129 70 L 124.5 74 Z" />
+                             <path d="M 105 80 C 108 78 111 78 114 80 L 109.5 84 Z" />
+                            <path d="M 115 85 C 118 83 121 83 124 85 L 119.5 89 Z" />
+                         </g>
+                         <text class="svg-text" x="115" y="60" fill="#1e40af">القشور</text>
+                         <path d="M 70 75 Q 150 70 210 75" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3,2" fill="none"/>
+                         <text class="svg-label-text" x="150" y="65">الخط الجانبي</text>
+                         <text class="svg-text interactive-element border-color-fish" data-target="info-swim-bladder" x="160" y="95" fill="#6d28d9">(مثانة العوم)</text>
+                     </svg>
+                 </div>
+                 <div class="w-full lg:w-1/2">
+                     <ul class="space-y-3 mb-6">
+                         <li><span class="interactive-element border-color-fish" data-target="info-gills">التنفس بالخياشيم</span></li>
+                         <li><span class="interactive-element border-color-fish" data-target="info-fins">الحركة بالزعانف</span></li>
+                         <li><span class="interactive-element border-color-fish" data-target="info-scales">الجسم مغطى بالقشور والمخاط</span></li>
+                         <li><span class="interactive-element border-color-fish" data-target="info-swim-bladder">مثانة العوم</span> (في الأسماك العظمية)</li>
+                         <li><span class="interactive-element border-color-fish" data-target="info-fish-reproduction">التكاثر</span></li>
+                     </ul>
+                     <div id="info-display-fish" class="space-y-3">
+                         <div id="info-fish-temp" class="info-panel border-color-fish"><p>الأسماك حيوانات <span class="font-semibold">متغيرة درجة الحرارة</span>.</p></div>
+                         <div id="info-gills" class="info-panel border-color-fish"><h4 class="font-bold text-blue-800">الخياشيم:</h4><p>تراكيب ريشية غنية بالأوعية الدموية، مغطاة بغطاء خيشومي (في الأسماك العظمية)، تسمح بامتصاص الأكسجين المذاب في الماء وطرح ثاني أكسيد الكربون.</p></div>
+                         <div id="info-fins" class="info-panel border-color-fish"><h4 class="font-bold text-blue-800">الزعانف:</h4><p>زوائد مدعومة بأشواك أو أشعة عظمية أو غضروفية، تستخدم للتوجيه، الاتزان، الحركة، والدفع.</p></div>
+                         <div id="info-scales" class="info-panel border-color-fish"><h4 class="font-bold text-blue-800">القشور والمخاط:</h4><p>القشور صفائح واقية. المخاط يقلل الاحتكاك، يحمي من الطفيليات والأمراض، ويساعد في تنظيم الأملاح.</p></div>
+                         <div id="info-swim-bladder" class="info-panel border-color-fish"><h4 class="font-bold text-blue-800">مثانة العوم:</h4><p>كيس داخلي مملوء بالغاز يسمح للأسماك العظمية بالتحكم في طفوها والبقاء عند أعماق مختلفة بأقل جهد.</p></div>
+                         <div id="info-fish-reproduction" class="info-panel border-color-fish"><h4 class="font-bold text-blue-800">التكاثر:</h4><p>معظم الأسماك تتكاثر بالإخصاب الخارجي، حيث تضع الأنثى البيض ويخصبه الذكر في الماء. بعضها (مثل أسماك القرش) لديها إخصاب داخلي.</p></div>
+                     </div>
+                 </div>
+            </div>
+
+            <h3 class="text-xl font-semibold text-blue-800 mt-10 mb-5">طوائف الأسماك الرئيسية:</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-blue-50 p-5 rounded-lg border border-blue-200 transition transform hover:scale-105 hover:shadow-md">
+                    <h4 class="font-bold mb-2 text-lg"><span class="interactive-element border-color-fish" data-target="info-bony-fish">الأسماك العظمية</span></h4>
+                    <p class="text-sm text-gray-600 mb-3">الأكثر تنوعاً (95%).</p>
+                    <div id="info-bony-fish" class="info-panel border-color-fish">
+                        <p>هيكل عظمي صلب، غطاء خيشومي، مثانة عوم، قشور متنوعة (مشطية، دائرية، أو لا قشور). إخصاب خارجي غالبًا. أمثلة: الهامور، السلمون، التونة، سمك الزينة.</p>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-5 rounded-lg border border-blue-200 transition transform hover:scale-105 hover:shadow-md">
+                     <h4 class="font-bold mb-2 text-lg"><span class="interactive-element border-color-fish" data-target="info-jawless-fish">اللافكيات</span></h4>
+                      <p class="text-sm text-gray-600 mb-3">مجموعة بدائية.</p>
+                     <div id="info-jawless-fish" class="info-panel border-color-fish">
+                         <p>جسم أنبوبي بدون قشور أو زعانف زوجية. هيكل غضروفي. فم دائري ماص بدون فكوك حقيقية. مثال: الجلكي، سمك الجريث.</p>
+                     </div>
+                </div>
+                <div class="bg-blue-50 p-5 rounded-lg border border-blue-200 transition transform hover:scale-105 hover:shadow-md">
+                     <h4 class="font-bold mb-2 text-lg"><span class="interactive-element border-color-fish" data-target="info-cartilaginous-fish">الأسماك الغضروفية</span></h4>
+                      <p class="text-sm text-gray-600 mb-3">مفترسات فعالة غالبًا.</p>
+                     <div id="info-cartilaginous-fish" class="info-panel border-color-fish">
+                         <p>هيكل غضروفي مرن. قشور درعية خشنة تشبه الأسنان. فكوك قوية. لا غطاء خيشومي (شقوق خيشومية ظاهرة). لا مثانة عوم. إخصاب داخلي غالبًا. أمثلة: القرش، الشفنينات (الراي)، الكيميرا.</p>
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-card border-color-amphibian">
+            <h2 class="section-header text-emerald-700">5. البرمائيات</h2>
+            <p class="text-gray-700">فقاريات <span class="interactive-element border-color-amphibian" data-target="info-amphibian-temp">متغيرة درجة الحرارة</span> تمثل الانتقال من الماء إلى اليابسة، حيث تقضي جزءًا من حياتها في كل بيئة. جلدها رطب ونفاذ. أمثلة: الضفدع، العلجوم، السلمندر، عديمات الأرجل.</p>
+            <p class="font-semibold mt-6 mb-3">تكيفات رئيسية:</p>
+            <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6">
+                <li><span class="interactive-element border-color-amphibian" data-target="info-amphibian-hibernation">البيات الشتوي/الصيفي</span></li>
+                <li><span class="interactive-element border-color-amphibian" data-target="info-amphibian-skeleton">هيكل عظمي وأطراف (غالبًا)</span> للدعم والحركة على اليابسة.</li>
+                <li><span class="interactive-element border-color-amphibian" data-target="info-amphibian-breathing">تنفس متنوع: خياشيم (يرقات)، رئات وجلد (بالغين)</span>.</li>
+                <li><span class="interactive-element border-color-amphibian" data-target="info-amphibian-heart">قلب ثلاثي الحجرات</span>.</li>
+                <li><span class="interactive-element border-color-amphibian" data-target="info-amphibian-senses">حواس متكيفة</span>.</li>
+                <li><span class="interactive-element border-color-amphibian" data-target="info-amphibian-reproduction">اعتماد على الماء للتكاثر (غالبًا)</span>.</li>
+            </ul>
+             <div id="info-display-amphibian" class="mt-6 space-y-3">
+                 <div id="info-amphibian-temp" class="info-panel border-color-amphibian"><p>البرمائيات حيوانات <span class="font-semibold">متغيرة درجة الحرارة</span>.</p></div>
+                 <div id="info-amphibian-hibernation" class="info-panel border-color-amphibian"><h4 class="font-bold text-emerald-800">البيات:</h4><p>تلجأ إلى السكون وتقليل الأيض للبقاء على قيد الحياة في الظروف البيئية الصعبة (البرد الشديد أو الجفاف).</p></div>
+                 <div id="info-amphibian-skeleton" class="info-panel border-color-amphibian"><h4 class="font-bold text-emerald-800">الهيكل والأطراف:</h4><p>هيكل عظمي يوفر دعماً أقوى من الغضروف. تطور الأطراف (في معظمها) سمح بالحركة على اليابسة.</p></div>
+                 <div id="info-amphibian-breathing" class="info-panel border-color-amphibian"><h4 class="font-bold text-emerald-800">التنفس:</h4><p>تحول من الخياشيم في اليرقات المائية إلى الرئات البسيطة والتنفس الجلدي الهام في البالغين. الجلد يجب أن يبقى رطباً ليسمح بمرور الأكسجين.</p></div>
+                 <div id="info-amphibian-heart" class="info-panel border-color-amphibian"><h4 class="font-bold text-emerald-800">القلب:</h4><p>ثلاث حجرات (أذينان وبطين واحد)، مما يؤدي إلى خلط جزئي للدم المؤكسج وغير المؤكسج في البطين.</p></div>
+                 <div id="info-amphibian-senses" class="info-panel border-color-amphibian"><h4 class="font-bold text-emerald-800">الحواس:</h4><p>تطور السمع في الهواء (طبلة الأذن)، عيون مكيفة للرؤية خارج الماء، لسان لزج للصيد.</p></div>
+                 <div id="info-amphibian-reproduction" class="info-panel border-color-amphibian"><h4 class="font-bold text-emerald-800">التكاثر:</h4><p>معظمها تضع بيضاً غير محمي بقشرة صلبة في الماء، ويحدث الإخصاب خارجياً. اليرقات مائية وتمر بتحول.</p></div>
+             </div>
+
+            <h3 class="text-xl font-semibold text-emerald-800 mt-10 mb-5"><span class="interactive-element border-color-amphibian" data-target="info-metamorphosis">التحول في البرمائيات</span></h3>
+            <p class="text-gray-700">عملية تغير جذري في الشكل والوظيفة من اليرقة المائية إلى البالغ الأرضي. شاهد مراحل تحول الضفدع:</p>
+            <div id="info-metamorphosis" class="info-panel border-color-amphibian">
+                 <h4 class="font-bold text-emerald-800">مراحل تحول الضفدع:</h4>
+                 <ol class="list-decimal list-inside space-y-1">
+                     <li>تضع الأنثى البيض الهلامي في الماء.</li>
+                     <li>يفقس البيض وتخرج يرقة مائية تسمى <span class="font-semibold">أبو ذنيبة</span>: تتنفس بالخياشيم، لها ذيل للسباحة، لا أرجل لها، وتتغذى على الطحالب.</li>
+                     <li>تنمو الأرجل الخلفية أولاً، ثم الأرجل الأمامية.</li>
+                     <li>تبدأ الرئات بالتكون، وتضمر الخياشيم.</li>
+                     <li>يقصر الذيل تدريجياً ويمتصه الجسم.</li>
+                     <li>يتغير شكل الفم والجهاز الهضمي للتكيف مع أكل اللحوم (الحشرات).</li>
+                     <li>يصبح ضفدعاً صغيراً يشبه البالغ ولكنه أصغر حجماً وله بقايا ذيل أحياناً.</li>
+                     <li>يصل إلى مرحلة البلوغ الكامل كضفدع أرضي أو شبه مائي يتنفس بالرئات والجلد.</li>
+                 </ol>
+                 <div class="svg-container mt-6">
+                     <svg viewBox="0 0 550 80" class="svg-diagram">
+                         <title>مراحل تحول الضفدع - رسم توضيحي محسن</title>
+                         <g>
+                             <text class="svg-text" x="40" y="15">1. بيض</text>
+                             <ellipse cx="40" cy="45" rx="25" ry="15" fill="#e0f2fe" stroke="#a5f3fc" stroke-width="1"/>
+                             <circle cx="35" cy="42" r="3" fill="#f0f9ff" opacity="0.8"/>
+                             <circle cx="45" cy="48" r="2.5" fill="#f0f9ff" opacity="0.8"/>
+                             <circle cx="40" cy="40" r="2" fill="#f0f9ff" opacity="0.8"/>
+                             <circle cx="50" cy="45" r="3" fill="#f0f9ff" opacity="0.8"/>
+                         </g>
+                         <line x1="75" y1="45" x2="105" y2="45" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
+                         <g>
+                             <text class="svg-text" x="145" y="15">2. أبو ذنيبة</text>
+                             <path d="M 120 45 Q 135 30 150 45 Q 140 60 120 45 Z" fill="#f5f5dc" />
+                             <path d="M 150 45 Q 175 40 175 50 Z" fill="#f5f5dc" />
+                         </g>
+                         <line x1="180" y1="45" x2="210" y2="45" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
+                         <g>
+                             <text class="svg-text" x="260" y="15">3. ظهور الأرجل الخلفية</text>
+                             <path d="M 225 45 Q 240 30 255 45 Q 245 60 225 45 Z" fill="#e6e6c9" />
+                             <path d="M 255 45 Q 275 40 275 50 Z" fill="#e6e6c9" />
+                             <polyline points="240,55 230,65 225,60" stroke="#a3a375" fill="none" stroke-width="2"/>
+                             <polyline points="245,55 235,65 230,60" stroke="#a3a375" fill="none" stroke-width="2"/>
+                         </g>
+                         <line x1="285" y1="45" x2="315" y2="45" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
+                         <g>
+                             <text class="svg-text" x="365" y="15">4. ضفدع صغير</text>
+                              <ellipse cx="355" cy="45" rx="20" ry="12" fill="#a7f3d0"/>
+                              <polyline points="335,55 325,68 315,60" stroke="#34d399" fill="none" stroke-width="2.5"/>
+                              <polyline points="375,55 385,68 395,60" stroke="#34d399" fill="none" stroke-width="2.5"/>
+                              <polyline points="348,55 345,62 340,58" stroke="#34d399" fill="none" stroke-width="2"/>
+                              <polyline points="362,55 365,62 370,58" stroke="#34d399" fill="none" stroke-width="2"/>
+                              <path d="M 375 45 Q 385 43 385 47 Z" fill="#a7f3d0" />
+                         </g>
+                         <line x1="395" y1="45" x2="425" y2="45" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#arrow)"/>
+                         <g>
+                             <text class="svg-text" x="480" y="15">5. ضفدع بالغ</text>
+                             <ellipse cx="480" cy="45" rx="25" ry="15" fill="#10b981"/>
+                             <polyline points="450,58 435,75 425,65" stroke="#059669" fill="none" stroke-width="3"/>
+                             <polyline points="510,58 525,75 535,65" stroke="#059669" fill="none" stroke-width="3"/>
+                             <polyline points="468,58 460,68 455,62" stroke="#059669" fill="none" stroke-width="2.5"/>
+                             <polyline points="492,58 500,68 505,62" stroke="#059669" fill="none" stroke-width="2.5"/>
+                         </g>
+                         <defs>
+                            <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                              <path d="M 0 0 L 10 5 L 0 10 z" fill="#6b7280" />
+                            </marker>
+                          </defs>
+                     </svg>
+                 </div>
+            </div>
+        </section>
+
+        <section class="section-card border-color-reptile">
+            <h2 class="section-header text-red-700">6. الزواحف</h2>
+            <p class="text-gray-700">فقاريات <span class="interactive-element border-color-reptile" data-target="info-reptile-temp">متغيرة درجة الحرارة</span>، وهي أول مجموعة فقاريات تكيفت بشكل كامل للحياة على اليابسة، بما في ذلك التكاثر.</p>
+            <p class="font-semibold mt-6 mb-3">تكيفات العيش على اليابسة:</p>
+            <ul class="list-disc list-inside space-y-2 text-gray-700 mb-6">
+                <li><span class="interactive-element border-color-reptile" data-target="info-reptile-skin">جلد جاف سميك مغطى بالحراشف الكيراتينية</span> لمنع فقدان الماء.</li>
+                <li><span class="interactive-element border-color-reptile" data-target="info-reptile-breathing">التنفس بالرئات فقط</span> بكفاءة عالية.</li>
+                <li><span class="interactive-element border-color-reptile" data-target="info-reptile-reproduction">الإخصاب الداخلي</span> للتكاثر بعيداً عن الماء.</li>
+                <li><span class="interactive-element border-color-reptile" data-target="info-reptile-egg">البيضة الأمينيونية (الرهلية)</span> التي تحمي الجنين وتوفر له بيئة متكاملة للنمو على اليابسة.</li>
+            </ul>
+             <div class="svg-container my-4">
+                 <svg viewBox="0 0 200 100" class="svg-diagram" style="max-width: 300px;">
+                     <title>رسم تخطيطي لسحلية (مثال لزاحف)</title>
+                     <path d="M 50 50 C 70 30, 130 30, 150 50 C 170 70, 130 90, 110 80 L 80 85 C 60 80, 30 70, 50 50 Z" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+                     <ellipse cx="40" cy="45" rx="15" ry="10" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+                     <circle cx="35" cy="43" r="2" fill="#7f1d1d"/> <polyline points="70,75 60,85 50,80" stroke="#dc2626" stroke-width="1.5" fill="none"/>
+                     <polyline points="120,78 130,90 140,85" stroke="#dc2626" stroke-width="1.5" fill="none"/>
+                     <polyline points="80,40 70,25 60,35" stroke="#dc2626" stroke-width="1.5" fill="none"/>
+                     <polyline points="130,40 140,25 150,35" stroke="#dc2626" stroke-width="1.5" fill="none"/>
+                     <path d="M 150 50 Q 180 45 200 40" stroke="#dc2626" stroke-width="1.5" fill="none"/>
+                     <g fill="#fee2e2">
+                         <circle cx="90" cy="55" r="3"/> <circle cx="100" cy="50" r="3"/> <circle cx="110" cy="55" r="3"/>
+                         <circle cx="95" cy="65" r="3"/> <circle cx="105" cy="60" r="3"/> <circle cx="115" cy="65" r="3"/>
+                         <circle cx="125" cy="60" r="3"/>
+                     </g>
+                 </svg>
+             </div>
+             <div id="info-display-reptile" class="mt-6 space-y-3">
+                  <div id="info-reptile-temp" class="info-panel border-color-reptile"><p>الزواحف حيوانات <span class="font-semibold">متغيرة درجة الحرارة</span>.</p></div>
+                 <div id="info-reptile-skin" class="info-panel border-color-reptile"><h4 class="font-bold text-red-800">الجلد والحراشف:</h4><p>الجلد سميك وجاف ومقاوم للماء بفضل الحراشف المكونة من الكيراتين. هذا يقلل فقدان الماء بشكل كبير ويحمي الجسم.</p></div>
+                 <div id="info-reptile-breathing" class="info-panel border-color-reptile"><h4 class="font-bold text-red-800">التنفس:</h4><p>تتنفس جميع الزواحف بواسطة الرئات فقط طوال حياتها. رئاتها أكثر تطوراً وتعقيداً من رئات البرمائيات.</p></div>
+                 <div id="info-reptile-reproduction" class="info-panel border-color-reptile"><h4 class="font-bold text-red-800">الإخصاب الداخلي:</h4><p>يتم إخصاب البويضة داخل جسم الأنثى قبل تكوّن القشرة حولها.</p></div>
+                 <div id="info-reptile-egg" class="info-panel border-color-reptile"><h4 class="font-bold text-red-800">البيضة الأمينيونية (الرهلية):</h4><p>تحتوي على أغشية داخلية (الكيس الأمينيوني، كيس المح، كيس الألانطوان) تحمي الجنين وتوفر له الغذاء والماء وتسمح بتبادل الغازات والتخلص من الفضلات، كل ذلك داخل قشرة واقية (جلدية أو صلبة).</p></div>
+            </div>
+
+             <h3 class="text-xl font-semibold text-red-800 mt-10 mb-5">أنواع الزواحف الرئيسية:</h3>
+             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                 <div class="bg-red-50 p-5 rounded-lg border border-red-200 transition transform hover:scale-105 hover:shadow-md">
+                     <h4 class="font-bold mb-2 text-lg"><span class="interactive-element border-color-reptile" data-target="info-turtles">السلاحف</span></h4>
+                     <div id="info-turtles" class="info-panel border-color-reptile"><p>تتميز بوجود صدفة (درع) للحماية.</p></div>
+                 </div>
+                 <div class="bg-red-50 p-5 rounded-lg border border-red-200 transition transform hover:scale-105 hover:shadow-md">
+                     <h4 class="font-bold mb-2 text-lg"><span class="interactive-element border-color-reptile" data-target="info-crocodilians">التمساحيات</span></h4>
+                     <div id="info-crocodilians" class="info-panel border-color-reptile"><p>زواحف كبيرة شبه مائية، مفترسة، لها قلب يقترب من أربع حجرات.</p></div>
+                 </div>
+                  <div class="bg-red-50 p-5 rounded-lg border border-red-200 transition transform hover:scale-105 hover:shadow-md">
+                     <h4 class="font-bold mb-2 text-lg"><span class="interactive-element border-color-reptile" data-target="info-snakes">الحيات</span></h4>
+                      <div id="info-snakes" class="info-panel border-color-reptile"><p>زواحف بدون أرجل، ذات أجسام طويلة ومرنة.</p></div>
+                 </div>
+                 <div class="bg-red-50 p-5 rounded-lg border border-red-200 transition transform hover:scale-105 hover:shadow-md">
+                     <h4 class="font-bold mb-2 text-lg"><span class="interactive-element border-color-reptile" data-target="info-lizards">السحالي</span></h4>
+                     <div id="info-lizards" class="info-panel border-color-reptile"><p>أكبر مجموعات الزواحف وأكثرها تنوعاً. معظمها لها أربعة أرجل.</p></div>
+                 </div>
+             </div>
+        </section>
+
+        <section class="section-card border-color-quiz">
+            <h2 class="section-header text-gray-700">7. اختبر فهمك</h2>
+            <div class="space-y-5"> <div class="quiz-question">
+                    <p class="font-semibold text-lg">1. اذكر الخصائص الأربع الرئيسية المشتركة بين معظم الحبليات.</p>
+                    <button class="toggle-answer">إظهار الإجابة</button>
+                    <p class="answer hidden">الإجابة: حبل ظهري، حبل عصبي ظهري مجوف، شقوق بلعومية، وذيل خلف الشرج (تظهر جميعها في مرحلة ما من دورة الحياة).</p>
+                </div>
+                 <div class="quiz-question">
+                    <p class="font-semibold text-lg">2. ما هي الخاصية الأساسية التي تميز الفقاريات عن باقي الحبليات؟</p>
+                    <button class="toggle-answer">إظهار الإجابة</button>
+                    <p class="answer hidden">الإجابة: وجود عمود فقري (سلسلة من الفقرات) يحيط بالحبل العصبي ويدعم الجسم.</p>
+                </div>
+                 <div class="quiz-question">
+                    <p class="font-semibold text-lg">3. قارن بين الحيوانات متغيرة وثابتة درجة الحرارة من حيث مصدر حرارة الجسم.</p>
+                    <button class="toggle-answer">إظهار الإجابة</button>
+                    <p class="answer hidden">الإجابة: المتغيرة تعتمد على البيئة الخارجية كمصدر رئيسي للحرارة. الثابتة تولد حرارتها داخلياً من خلال عمليات الأيض.</p>
+                </div>
+                 <div class="quiz-question">
+                    <p class="font-semibold text-lg">4. ما هي أهمية مثانة العوم في الأسماك العظمية؟ وأي طائفة من الأسماك تفتقر إليها؟</p>
+                    <button class="toggle-answer">إظهار الإجابة</button>
+                    <p class="answer hidden">الإجابة: أهميتها التحكم في الطفو والعمق. الأسماك الغضروفية تفتقر إليها.</p>
+                </div>
+                 <div class="quiz-question">
+                    <p class="font-semibold text-lg">5. لماذا يجب أن يبقى جلد البرمائيات البالغة رطباً؟</p>
+                    <button class="toggle-answer">إظهار الإجابة</button>
+                    <p class="answer hidden">الإجابة: لأنها تعتمد على التنفس الجلدي بشكل كبير لتبادل الغازات (الأكسجين وثاني أكسيد الكربون)، وهذا لا يمكن أن يحدث إلا عبر سطح رطب.</p>
+                </div>
+                 <div class="quiz-question">
+                    <p class="font-semibold text-lg">6. ما هو التحول؟ اذكر مثالاً لتغير رئيسي يحدث أثناء تحول الضفدع.</p>
+                    <button class="toggle-answer">إظهار الإجابة</button>
+                    <p class="answer hidden">الإجابة: التحول هو سلسلة تغيرات جذرية في شكل الجسم ووظيفته من اليرقة إلى البالغ. مثال: تغير طريقة التنفس من الخياشيم إلى الرئات والجلد، أو اختفاء الذيل ونمو الأرجل.</p>
+                </div>
+                 <div class="quiz-question">
+                    <p class="font-semibold text-lg">7. ما هو التكيف الأكثر أهمية الذي سمح للزواحف بوضع بيضها على اليابسة؟</p>
+                    <button class="toggle-answer">إظهار الإجابة</button>
+                    <p class="answer hidden">الإجابة: البيضة الأمينيونية (الرهلية) بأغشيتها الداخلية وقشرتها الواقية.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center mt-16 mb-8"> <p class="text-gray-500 text-sm">تم تحديث هذا المعمل الافتراضي بواسطة Gemini.</p>
+    </footer>
+
+    <script>
+        // Function to handle clicks on interactive elements and toggle info panels
+        function handleInteraction(event) {
+            const targetId = event.currentTarget.getAttribute('data-target');
+            if (!targetId) return;
+
+            const targetPanel = document.getElementById(targetId);
+            if (!targetPanel) return;
+
+            const parentContainer = targetPanel.parentElement;
+            if (!parentContainer) return;
+
+            // Hide all other active info panels within the same container
+            const siblingPanels = parentContainer.querySelectorAll('.info-panel.active');
+            siblingPanels.forEach(panel => {
+                if (panel.id !== targetId) {
+                    panel.classList.remove('active');
+                }
+            });
+
+            // Toggle the active class for the clicked panel
+            targetPanel.classList.toggle('active');
+        }
+
+        // Add event listeners to all elements with 'data-target' attribute
+        const interactiveElements = document.querySelectorAll('[data-target]');
+        interactiveElements.forEach(element => {
+            element.addEventListener('click', handleInteraction);
+            // Add matching border color to interactive text elements for visual connection
+            const panel = document.getElementById(element.getAttribute('data-target'));
+            if (panel) {
+                 const borderColorClass = Array.from(panel.classList).find(cls => cls.startsWith('border-color-'));
+                 if (borderColorClass) {
+                     const colorMap = {
+                         'border-color-chordate': 'border-amber-500',
+                         'border-color-vertebrate': 'border-lime-500',
+                         'border-color-temp': 'border-purple-500',
+                         'border-color-fish': 'border-blue-500',
+                         'border-color-amphibian': 'border-emerald-500',
+                         'border-color-reptile': 'border-red-500',
+                     };
+                     if (colorMap[borderColorClass]) {
+                         element.classList.add(colorMap[borderColorClass]);
+                     }
+                 }
+            }
+        });
+
+        // Quiz Answer Toggle Functionality
+        const answerToggles = document.querySelectorAll('.toggle-answer');
+        answerToggles.forEach(button => {
+            button.addEventListener('click', () => {
+                const answer = button.nextElementSibling;
+                if (answer && answer.classList.contains('answer')) {
+                    answer.classList.toggle('hidden');
+                    // Ensure button text is always Arabic
+                    button.textContent = answer.classList.contains('hidden') ? 'إظهار الإجابة' : 'إخفاء الإجابة';
+                }
+            });
+        });
+
+    </script>
+
+</body>
+</html>
