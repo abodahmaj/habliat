@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مقرر إلكتروني: انتقال الحرارة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(to bottom, #f0f9ff, #e0f2fe); /* sky-50 to sky-100 */
+        }
+        .main-container {
+            max-width: 4xl; /* عرض مناسب لمختلف الشاشات */
+            margin: 1rem auto; /* هامش أقل للشاشات الصغيرة */
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            padding: 1.5rem; /* تقليل الحشو للشاشات الصغيرة */
+            overflow: hidden;
+        }
+         @media (min-width: 768px) { /* md breakpoint */
+             .main-container {
+                 margin: 2rem auto;
+                 padding: 2rem 2.5rem;
+             }
+         }
+
+        /* --- التحكم في عرض الخطوات --- */
+        .lesson-step {
+            display: none; /* إخفاء جميع الخطوات مبدئيًا */
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        .lesson-step.active-step {
+            display: block; /* إظهار الخطوة النشطة فقط */
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* --- نهاية التحكم في عرض الخطوات --- */
+
+        section { /* تنسيق قسم المحتوى داخل الخطوة */
+            border-radius: 0.75rem;
+            border-width: 1px;
+            padding: 1rem; /* تقليل الحشو للشاشات الصغيرة */
+            margin-bottom: 1.5rem;
+        }
+         @media (min-width: 768px) { /* md breakpoint */
+            section {
+                 padding: 1.5rem;
+             }
+         }
+
+        h1 {
+            color: #0369a1; /* sky-700 */
+            margin-bottom: 0.5rem; /* تقليل الهامش */
+            font-size: 1.875rem; /* text-3xl */
+             line-height: 2.25rem;
+        }
+         @media (min-width: 768px) { /* md breakpoint */
+            h1 {
+                 font-size: 2.25rem; /* text-4xl */
+                 line-height: 2.5rem;
+             }
+         }
+         .teacher-info {
+             color: #4b5563; /* gray-600 */
+             margin-bottom: 2rem;
+             font-size: 0.875rem; /* text-sm */
+             text-align: center;
+         }
+         @media (min-width: 768px) { /* md breakpoint */
+            .teacher-info {
+                 font-size: 1rem; /* text-base */
+             }
+         }
+
+        h2 {
+            margin-bottom: 1rem; /* تقليل الهامش */
+            border-bottom: 2px solid;
+            padding-bottom: 0.5rem;
+            border-color: inherit;
+            font-size: 1.25rem; /* text-xl */
+        }
+         @media (min-width: 768px) { /* md breakpoint */
+            h2 {
+                 font-size: 1.5rem; /* text-2xl */
+                 margin-bottom: 1.5rem;
+             }
+         }
+        /* --- تنسيق أسئلة التحقق المنفصلة --- */
+        .quiz-step-container { /* حاوية لخطوة السؤال */
+             border: 1px solid #e5e7eb; /* gray-200 */
+             border-radius: 0.75rem;
+             padding: 1rem; /* تقليل الحشو للشاشات الصغيرة */
+             margin-top: 1.5rem;
+             background-color: #f9fafb; /* gray-50 */
+        }
+         @media (min-width: 768px) { /* md breakpoint */
+            .quiz-step-container {
+                 padding: 1.5rem;
+             }
+         }
+        .quiz-step-container p { /* نص السؤال */
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1f2937; /* gray-800 */
+            font-size: 1rem; /* text-base */
+        }
+         @media (min-width: 768px) { /* md breakpoint */
+            .quiz-step-container p {
+                 font-size: 1.125rem; /* text-lg */
+             }
+         }
+        .quiz-step-container .options { /* حاوية الخيارات */
+            display: flex;
+            flex-wrap: wrap; /* السماح بالالتفاف في الشاشات الصغيرة */
+            gap: 0.5rem; /* مسافة بين الأزرار */
+            justify-content: center; /* توسيط الأزرار */
+            margin-bottom: 1rem;
+        }
+        .quiz-step-container .options button,
+        .step-navigation button { /* توحيد نمط أزرار الخيارات والتالي */
+            font-weight: 600;
+            padding: 0.6rem 1rem; /* تعديل الحشو */
+            border-radius: 0.5rem;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            border: 1px solid #d1d5db; /* gray-300 */
+            background-color: white;
+            color: #374151; /* gray-700 */
+            flex-grow: 1; /* السماح للأزرار بالتمدد */
+            min-width: 100px; /* حد أدنى للعرض */
+        }
+         @media (min-width: 640px) { /* sm breakpoint */
+            .quiz-step-container .options button {
+                 flex-grow: 0; /* منع التمدد في الشاشات الأكبر */
+             }
+         }
+
+        .quiz-step-container .options button:hover:not(:disabled) {
+            border-color: #9ca3af; /* gray-400 */
+            background-color: #f3f4f6; /* gray-100 */
+            transform: translateY(-1px);
+        }
+        .quiz-step-container .options button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .quiz-step-container .options button.selected { /* نمط الزر المختار (قبل التحقق) */
+             border-color: #60a5fa; /* blue-400 */
+             background-color: #dbeafe; /* blue-100 */
+        }
+        .quiz-step-container .options button.correct { /* نمط الإجابة الصحيحة */
+            background-color: #10b981 !important; /* emerald-500 */
+            color: white !important;
+            border-color: #059669 !important; /* emerald-600 */
+        }
+        .quiz-step-container .options button.wrong { /* نمط الإجابة الخاطئة */
+            background-color: #ef4444 !important; /* red-500 */
+            color: white !important;
+            border-color: #dc2626 !important; /* red-600 */
+        }
+        .quiz-step-container .feedback { /* رسالة التأكيد */
+            font-weight: 600;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            display: none; /* إخفاء مبدئيًا */
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            text-align: center;
+        }
+        .quiz-step-container .feedback.show { display: block; opacity: 1; }
+        .quiz-step-container .feedback.correct { color: #059669; background-color: #d1fae5; }
+        .quiz-step-container .feedback.wrong { color: #dc2626; background-color: #fee2e2; }
+
+        /* --- تنسيق أزرار التنقل --- */
+        .step-navigation {
+            margin-top: 1.5rem;
+            text-align: center; /* توسيط زر التالي */
+        }
+        .step-navigation button {
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            border-color: #2563eb; /* blue-600 */
+        }
+         .step-navigation button:hover:not(:disabled) {
+             background-color: #2563eb; /* blue-600 */
+             transform: translateY(-1px);
+         }
+         .step-navigation button:disabled {
+             background-color: #9ca3af; /* gray-400 */
+             border-color: #9ca3af;
+             opacity: 0.7;
+             cursor: not-allowed;
+         }
+        /* --- نهاية تنسيق أسئلة التحقق والتنقل --- */
+
+        /* (بقية الأنماط العامة للأقسام والمختبر والاختبار النهائي كما هي) */
+        .section-intro { background-color: #f0f9ff; border-color: #bae6fd; color: #0369a1; }
+        .section-conduction { background-color: #fffbeb; border-color: #fde68a; color: #b45309; }
+        .section-convection { background-color: #ecfdf5; border-color: #a7f3d0; color: #047857; }
+        .section-radiation { background-color: #fefce8; border-color: #fef08a; color: #a16207; }
+        .section-conductors { background-color: #f5f3ff; border-color: #ddd6fe; color: #6d28d9; }
+        .section-lab { background-color: #f0f9ff; border-color: #bfdbfe; color: #1e40af; }
+        .section-extra { background-color: #f0fdfa; border-color: #99f6e4; color: #0f766e; }
+        .section-quiz { background-color: #fafafa; border-color: #e5e5e5; color: #404040; }
+
+        @keyframes rise { from { transform: translateY(0) scale(1); opacity: 1; } 50% { transform: translateY(-20px) scale(1.1); opacity: 0.5; } to { transform: translateY(-40px) scale(0.8); opacity: 0; } }
+        @keyframes sink { from { transform: translateY(0) scale(0.8); opacity: 0; } 50% { transform: translateY(20px) scale(1.1); opacity: 0.5; } to { transform: translateY(40px) scale(1); opacity: 1; } }
+        .hot-particle { animation: rise 2.5s ease-in-out infinite; }
+        .cold-particle { animation: sink 2.5s ease-in-out infinite; }
+
+        /* --- تنسيق الاختبار النهائي --- */
+        #quiz-form input[type="radio"] + label { border: 2px solid #d1d5db; border-radius: 0.5rem; padding: 0.6rem 1.2rem; transition: all 0.2s ease-in-out; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); cursor: pointer; }
+        #quiz-form input[type="radio"]:not(:checked) + label:hover { border-color: #9ca3af; background-color: #f9fafb; transform: translateY(-2px); }
+        #quiz-form input[type="radio"]:checked + label { background-color: #3b82f6; color: white; border-color: #2563eb; box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1); }
+        #quiz-form .correct-answer { background-color: #10b981 !important; color: white !important; border-color: #059669 !important; }
+        #quiz-form .wrong-answer { background-color: #ef4444 !important; color: white !important; border-color: #dc2626 !important; }
+        #quiz-form .feedback { font-weight: 600; margin-top: 0.5rem; padding: 0.5rem; border-radius: 0.375rem; display: none; opacity: 0; transition: opacity 0.5s ease-in-out; }
+        #quiz-form .feedback.show { display: block; opacity: 1; }
+        #quiz-form .feedback.correct { color: #059669; background-color: #d1fae5; }
+        #quiz-form .feedback.wrong { color: #dc2626; background-color: #fee2e2; }
+        #quiz-submit-btn { background-color: #2563eb; color: white; } #quiz-submit-btn:hover { background-color: #1d4ed8; }
+
+        .progress-bar-container { height: 25px; border-radius: 0.5rem; border: none; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); background-color: #e5e7eb; }
+        .progress-bar { height: 100%; border-radius: 0.5rem; transition: width 0.4s ease-out, background-color 0.4s ease-out; text-align: center; color: white; font-weight: 600; line-height: 25px; font-size: 0.8rem; background: linear-gradient(to right, #f87171, #ef4444); }
+        #thermo-copper-fill, #thermo-wood-fill { transition: height 0.4s ease-out, y 0.4s ease-out, fill 0.4s ease-out; }
+
+        /* Responsive SVG */
+        svg {
+            max-width: 100%;
+            height: auto;
+        }
+        /* Responsive Lab Section */
+        #step-lab .flex {
+            flex-direction: column; /* Stack lab items vertically on small screens */
+        }
+         @media (min-width: 768px) { /* md breakpoint */
+            #step-lab .flex {
+                 flex-direction: row; /* Side-by-side on larger screens */
+             }
+             #step-lab .flex > div {
+                 width: 50%; /* Each item takes half width */
+             }
+         }
+        /* Responsive Conductors Section */
+         #step-conductors .grid {
+             grid-template-columns: 1fr; /* Single column on small screens */
+         }
+         @media (min-width: 768px) { /* md breakpoint */
+            #step-conductors .grid {
+                 grid-template-columns: repeat(2, 1fr); /* Two columns on larger screens */
+             }
+         }
+
+
+    </style>
+</head>
+<body class="bg-gray-100 p-2 md:p-8"> <div class="main-container">
+         <h1 class="text-center font-bold">انتقال الحرارة</h1>
+         <p class="teacher-info">معلم المادة: علي جبريل</p>
+
+        <div id="step-intro" class="lesson-step active-step">
+            <section class="section-intro">
+                <h2 class="font-bold">مرحباً بك في درس انتقال الحرارة!</h2>
+                <p class="mb-4 text-gray-700">في هذا الدرس التفاعلي، سنستكشف معًا كيف تنتقل الطاقة الحرارية من مكان لآخر بثلاث طرق مختلفة. استعد لرحلة ممتعة في عالم الفيزياء!</p>
+                <p class="font-semibold mb-2 text-gray-800">أهداف التعلم:</p>
+                <ul class="list-disc list-inside text-gray-700 space-y-1 marker:text-sky-600">
+                    <li>وصف طرائق انتقال الحرارة: التوصيل، الحمل، والإشعاع.</li>
+                    <li>التمييز بين المواد الموصلة والعازلة للحرارة.</li>
+                    <li>فهم أهمية الحرارة النوعية والتلوث الحراري.</li>
+                </ul>
+                 <p class="mt-4 text-gray-700 p-3 bg-sky-100 rounded-md border border-sky-300 text-sm md:text-base"><strong>تذكر:</strong> الحرارة تنتقل دائمًا من <strong class="text-red-500">الأسخن</strong> 🔥 إلى <strong class="text-blue-500">الأبرد</strong> ❄️.</p>
+            </section>
+            <div class="step-navigation">
+                <button class="next-step-btn" data-target="step-conduction-content">ابدأ الدرس ←</button>
+            </div>
+        </div>
+
+        <div id="step-conduction-content" class="lesson-step">
+            <section class="section-conduction">
+                <h2 class="font-bold">1. التوصيل الحراري (Conduction)</h2>
+                <p class="mb-4 text-gray-700 text-sm md:text-base">هو انتقال الحرارة عبر <strong class="font-semibold">التلامس المباشر</strong> بين الجزيئات. عندما يسخن طرف، تهتز جزيئاته بقوة وتصطدم بالجزيئات المجاورة، ناقلةً الحرارة. يحدث هذا بشكل أساسي في <strong class="font-semibold">المواد الصلبة</strong>.</p>
+                <div class="flex justify-center items-center my-5 p-3 bg-amber-100 rounded-lg">
+                     <svg width="250" height="100" viewBox="0 0 250 100" xmlns="http://www.w3.org/2000/svg"> <defs> <linearGradient id="heatGradient" x1="0%" y1="0%" x2="100%" y2="0%"> <stop offset="0%" style="stop-color:#dc2626; stop-opacity:1" /> <stop offset="50%" style="stop-color:#facc15; stop-opacity:1" /> <stop offset="100%" style="stop-color:#60a5fa; stop-opacity:1" /> </linearGradient> </defs> <rect x="10" y="40" width="230" height="20" rx="5" ry="5" fill="url(#heatGradient)" stroke="#a16207" stroke-width="1"/> <path d="M 10 60 Q 15 75 20 60 Q 25 75 30 60 Q 35 75 40 60 L 10 60 Z" fill="#f97316" stroke="#ea580c" stroke-width="1"/> <text x="15" y="85" font-family="Cairo, sans-serif" font-size="12" fill="#dc2626">حرارة</text> <circle cx="30" cy="50" r="5" fill="#dc2626"> <animate attributeName="cy" values="50; 48; 52; 50" dur="0.3s" repeatCount="indefinite" /> </circle> <circle cx="50" cy="50" r="5" fill="#f97316"> <animate attributeName="cy" values="50; 49; 51; 50" dur="0.4s" repeatCount="indefinite" begin="0.1s"/> </circle> <circle cx="70" cy="50" r="5" fill="#eab308"/> <circle cx="90" cy="50" r="5" fill="#facc15"/> <circle cx="110" cy="50" r="5" fill="#a5f3fc"/> <circle cx="130" cy="50" r="5" fill="#67e8f9"/> <circle cx="150" cy="50" r="5" fill="#22d3ee"/> <circle cx="170" cy="50" r="5" fill="#93c5fd"/> <circle cx="190" cy="50" r="5" fill="#60a5fa"/> <circle cx="210" cy="50" r="5" fill="#60a5fa"/> <circle cx="230" cy="50" r="5" fill="#60a5fa"/> <text x="70" y="25" font-family="Cairo, sans-serif" font-size="12" fill="black" font-weight="600">انتقال الحرارة بالاهتزاز والتصادم</text> </svg>
+                </div>
+            </section>
+             <div class="step-navigation">
+                 <button class="next-step-btn" data-target="step-conduction-quiz">اختبر فهمك ←</button>
+            </div>
+        </div>
+
+        <div id="step-conduction-quiz" class="lesson-step">
+            <div class="quiz-step-container" data-correct="solids">
+                <p>سؤال تحقق (1/5): في أي حالة للمادة يحدث التوصيل الحراري بشكل أكثر كفاءة؟</p>
+                <div class="options">
+                    <button value="solids">المواد الصلبة</button>
+                    <button value="liquids">المواد السائلة</button>
+                    <button value="gases">المواد الغازية</button>
+                </div>
+                <div class="feedback"></div>
+            </div>
+            <div class="step-navigation">
+                <button class="next-step-btn" data-target="step-convection-content" disabled>التالي ←</button>
+            </div>
+        </div>
+
+        <div id="step-convection-content" class="lesson-step">
+             <section class="section-convection">
+                <h2 class="font-bold">2. الحمل الحراري (Convection)</h2>
+                <p class="mb-4 text-gray-700 text-sm md:text-base">هنا تتحرك <strong class="font-semibold">الموائع (السوائل والغازات)</strong> نفسها حاملةً الحرارة. الجزء الساخن (أقل كثافة) يرتفع، والجزء البارد (أكثر كثافة) يهبط، مكونًا <strong class="font-semibold">تيارات الحمل</strong>.</p>
+                 <div class="flex justify-center items-center my-5 p-3 bg-emerald-100 rounded-lg">
+                    <svg width="200" height="220" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg"> <path d="M 30 180 L 30 50 Q 30 30 50 30 L 150 30 Q 170 30 170 50 L 170 180 Z" fill="#a7f3d0" stroke="#059669" stroke-width="2" fill-opacity="0.4"/> <rect x="20" y="180" width="160" height="10" rx="3" ry="3" fill="#9ca3af"/> <path d="M 85 190 Q 90 205 95 190 Q 100 205 105 190 Q 110 205 115 190 L 85 190 Z" fill="#f97316" stroke="#ea580c" stroke-width="1"/> <text x="88" y="215" font-family="Cairo, sans-serif" font-size="12" fill="#dc2626">تسخين</text> <circle cx="100" cy="160" r="5" fill="#ef4444" class="hot-particle" style="animation-delay: 0s;"/> <circle cx="90" cy="150" r="5" fill="#ef4444" class="hot-particle" style="animation-delay: 0.8s;"/> <circle cx="110" cy="170" r="5" fill="#ef4444" class="hot-particle" style="animation-delay: 1.6s;"/> <circle cx="60" cy="80" r="5" fill="#3b82f6" class="cold-particle" style="animation-delay: 0s;"/> <circle cx="140" cy="70" r="5" fill="#3b82f6" class="cold-particle" style="animation-delay: 0.8s;"/> <circle cx="50" cy="90" r="5" fill="#3b82f6" class="cold-particle" style="animation-delay: 1.6s;"/> <path d="M 105 150 Q 140 110 140 75" stroke="#dc2626" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="5 3"/> <polygon points="138,75 147,80 142,70" fill="#dc2626"/> <path d="M 95 150 Q 60 110 60 75" stroke="#2563eb" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="5 3"/> <polygon points="62,75 53,80 58,70" fill="#2563eb"/> <text x="145" y="110" font-family="Cairo, sans-serif" font-size="12" fill="#dc2626" font-weight="600">صعود</text> <text x="25" y="110" font-family="Cairo, sans-serif" font-size="12" fill="#2563eb" font-weight="600">هبوط</text> </svg>
+                </div>
+            </section>
+              <div class="step-navigation">
+                  <button class="next-step-btn" data-target="step-convection-quiz">اختبر فهمك ←</button>
+            </div>
+        </div>
+
+        <div id="step-convection-quiz" class="lesson-step">
+             <div class="quiz-step-container" data-correct="density">
+                 <p>سؤال تحقق (2/5): ما هو العامل الرئيسي الذي يسبب تيارات الحمل الحراري الطبيعي؟</p>
+                 <div class="options">
+                     <button value="pressure">اختلاف الضغط</button>
+                     <button value="density">اختلاف الكثافة</button>
+                     <button value="volume">اختلاف الحجم</button>
+                 </div>
+                 <div class="feedback"></div>
+             </div>
+             <div class="step-navigation">
+                 <button class="next-step-btn" data-target="step-radiation-content" disabled>التالي ←</button>
+            </div>
+        </div>
+
+        <div id="step-radiation-content" class="lesson-step">
+             <section class="section-radiation">
+                <h2 class="font-bold">3. الإشعاع الحراري (Radiation)</h2>
+                <p class="mb-4 text-gray-700 text-sm md:text-base">تنتقل الحرارة هنا على شكل <strong class="font-semibold">موجات كهرومغناطيسية</strong> (مثل الضوء والأشعة تحت الحمراء). الإشعاع لا يحتاج إلى وسط مادي ويمكنه السفر عبر <strong class="font-semibold">الفراغ</strong>، مثل حرارة الشمس التي تصلنا.</p>
+                <div class="flex justify-center items-center my-5 p-3 bg-yellow-100 rounded-lg">
+                    <svg width="250" height="120" viewBox="0 0 250 120" xmlns="http://www.w3.org/2000/svg"> <circle cx="50" cy="60" r="25" fill="#facc15" stroke="#f59e0b" stroke-width="2"/> <g stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"> <line x1="50" y1="30" x2="50" y2="10"/> <line x1="50" y1="90" x2="50" y2="110"/> <line x1="20" y1="60" x2="0" y2="60"/> <line x1="80" y1="60" x2="100" y2="60"/> <line x1="30" y1="40" x2="15" y2="25"/> <line x1="70" y1="80" x2="85" y2="95"/> <line x1="30" y1="80" x2="15" y2="95"/> <line x1="70" y1="40" x2="85" y2="25"/> </g> <text x="30" y="115" font-family="Cairo, sans-serif" font-size="12" fill="#a16207" font-weight="600">مصدر إشعاع</text> <g fill="none" stroke="#ef4444" stroke-width="2"> <path d="M 90 45 c 10 -8, 20 8, 30 0" stroke-dasharray="4 3"> <animate attributeName="stroke-dashoffset" values="0;7" dur="0.6s" repeatCount="indefinite"/> </path> <path d="M 95 60 c 10 -8, 20 8, 30 0" stroke-dasharray="4 3"> <animate attributeName="stroke-dashoffset" values="7;0" dur="0.6s" repeatCount="indefinite"/> </path> <path d="M 90 75 c 10 -8, 20 8, 30 0" stroke-dasharray="4 3"> <animate attributeName="stroke-dashoffset" values="0;7" dur="0.6s" repeatCount="indefinite"/> </path> </g> <rect x="160" y="45" width="70" height="30" rx="5" ry="5" fill="#dbeafe" stroke="#60a5fa" stroke-width="1.5"/> <text x="170" y="95" font-family="Cairo, sans-serif" font-size="12" fill="#1e40af" font-weight="600">جسم يستقبل الحرارة</text> <text x="95" y="25" font-family="Cairo, sans-serif" font-size="12" fill="#dc2626" font-weight="600">موجات حرارية</text> </svg>
+                </div>
+            </section>
+             <div class="step-navigation">
+                 <button class="next-step-btn" data-target="step-radiation-quiz">اختبر فهمك ←</button>
+            </div>
+        </div>
+
+        <div id="step-radiation-quiz" class="lesson-step">
+             <div class="quiz-step-container" data-correct="no">
+                 <p>سؤال تحقق (3/5): هل يحتاج الإشعاع الحراري إلى وسط مادي (مثل الهواء أو الماء) للانتقال؟</p>
+                  <div class="options">
+                     <button value="yes">نعم، يحتاج وسط</button>
+                     <button value="no">لا، يمكنه الانتقال في الفراغ</button>
+                 </div>
+                 <div class="feedback"></div>
+             </div>
+             <div class="step-navigation">
+                 <button class="next-step-btn" data-target="step-conductors-content" disabled>التالي ←</button>
+            </div>
+        </div>
+
+        <div id="step-conductors-content" class="lesson-step">
+             <section class="section-conductors">
+                <h2 class="font-bold">4. الموصلات والعوازل الحرارية</h2>
+                <div class="grid gap-6"> <div class="p-4 bg-violet-100 rounded-lg border border-violet-300">
+                        <h3 class="text-xl font-semibold mb-2">الموصلات الحرارية ⚡</h3>
+                        <p class="text-gray-700 text-sm md:text-base">مواد تسمح بانتقال الحرارة <strong class="font-semibold">بسهولة</strong> (مثل الفلزات: نحاس، ألومنيوم).</p>
+                        <div class="flex justify-center items-center my-4"> <svg width="150" height="80" viewBox="0 0 150 80" xmlns="http://www.w3.org/2000/svg"> <rect x="10" y="30" width="130" height="20" rx="5" ry="5" fill="#e5e7eb" stroke="#9ca3af"/> <path d="M 10 50 Q 15 65 20 50 Q 25 65 30 50 Q 35 65 40 50 L 10 50 Z" fill="#f97316"/> <circle cx="30" cy="40" r="4" fill="#ef4444"/> <circle cx="55" cy="40" r="4" fill="#ef4444"/> <circle cx="80" cy="40" r="4" fill="#ef4444"/> <circle cx="105" cy="40" r="4" fill="#ef4444"/> <circle cx="130" cy="40" r="4" fill="#ef4444"/> <text x="45" y="70" font-size="12" font-weight="600">موصل حراري</text> </svg> </div>
+                    </div>
+                    <div class="p-4 bg-violet-100 rounded-lg border border-violet-300">
+                        <h3 class="text-xl font-semibold mb-2">العوازل الحرارية 🛡️</h3>
+                        <p class="text-gray-700 text-sm md:text-base">مواد <strong class="font-semibold">تقاوم</strong> انتقال الحرارة (مثل الخشب، البلاستيك، الهواء).</p>
+                         <div class="flex justify-center items-center my-4"> <svg width="150" height="80" viewBox="0 0 150 80" xmlns="http://www.w3.org/2000/svg"> <rect x="10" y="30" width="130" height="20" rx="5" ry="5" fill="#a3e635" stroke="#65a30d"/> <path d="M 10 50 Q 15 65 20 50 Q 25 65 30 50 Q 35 65 40 50 L 10 50 Z" fill="#f97316"/> <circle cx="30" cy="40" r="4" fill="#ef4444"/> <circle cx="55" cy="40" r="4" fill="#f97316"/> <circle cx="80" cy="40" r="4" fill="#eab308"/> <text x="45" y="70" font-size="12" font-weight="600">عازل حراري</text> </svg> </div>
+                    </div>
+                </div>
+            </section>
+             <div class="step-navigation">
+                 <button class="next-step-btn" data-target="step-conductors-quiz">اختبر فهمك ←</button>
+            </div>
+        </div>
+
+        <div id="step-conductors-quiz" class="lesson-step">
+             <div class="quiz-step-container" data-correct="conductor">
+                 <p>سؤال تحقق (4/5): هل يعتبر النحاس مادة موصلة أم عازلة للحرارة؟</p>
+                  <div class="options">
+                     <button value="conductor">موصلة</button>
+                     <button value="insulator">عازلة</button>
+                 </div>
+                 <div class="feedback"></div>
+             </div>
+             <div class="step-navigation">
+                 <button class="next-step-btn" data-target="step-lab" disabled>التالي ←</button>
+            </div>
+        </div>
+
+        <div id="step-lab" class="lesson-step">
+             <section class="section-lab">
+                <h2 class="font-bold">5. المختبر الافتراضي: سباق التوصيل!</h2>
+                <p class="mb-4 text-gray-700 text-sm md:text-base">جرب بنفسك! سخّن قضيب النحاس وقضيب الخشب ولاحظ أيهما يسخن أسرع عند الطرف الآخر. اضغط "ابدأ التسخين".</p>
+                <div class="flex flex-col md:flex-row justify-around items-stretch gap-4 md:gap-8 my-6">
+                    <div class="text-center w-full p-3 md:p-5 border rounded-lg bg-white shadow-md flex flex-col">
+                        <h3 class="font-semibold text-lg mb-3 text-amber-700">قضيب نحاسي</h3>
+                        <div class="flex-grow flex justify-center items-center">
+                            <svg width="200" height="100" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" class="mx-auto"> <rect x="10" y="40" width="180" height="20" rx="5" ry="5" fill="#fde68a" stroke="#ca8a04"/> <path d="M 10 60 Q 15 75 20 60 Q 25 75 30 60 Q 35 75 40 60 L 10 60 Z" fill="#f97316"/> <rect x="170" y="10" width="12" height="50" rx="6" ry="6" fill="#e5e7eb" stroke="#9ca3af"/> <rect id="thermo-copper-fill" x="172.5" y="55" width="7" height="0" rx="3.5" ry="3.5" fill="#dc2626"/> <circle cx="176" cy="65" r="9" fill="#dc2626" stroke="white" stroke-width="1"/> <text x="168" y="9" font-size="11" font-weight="600">°C</text> </svg>
+                        </div>
+                        <div class="mt-4"> <div class="progress-bar-container mb-2"> <div id="progress-copper" class="progress-bar" style="width: 0%;">0%</div> </div> <p class="text-sm md:text-md font-medium">درجة الحرارة: <span id="temp-copper" class="font-bold text-blue-700">20</span> °C</p> </div>
+                    </div>
+                    <div class="text-center w-full p-3 md:p-5 border rounded-lg bg-white shadow-md flex flex-col">
+                        <h3 class="font-semibold text-lg mb-3 text-lime-700">قضيب خشبي</h3>
+                        <div class="flex-grow flex justify-center items-center">
+                            <svg width="200" height="100" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" class="mx-auto"> <rect x="10" y="40" width="180" height="20" rx="5" ry="5" fill="#d9f99d" stroke="#84cc16"/> <path d="M 10 60 Q 15 75 20 60 Q 25 75 30 60 Q 35 75 40 60 L 10 60 Z" fill="#f97316"/> <rect x="170" y="10" width="12" height="50" rx="6" ry="6" fill="#e5e7eb" stroke="#9ca3af"/> <rect id="thermo-wood-fill" x="172.5" y="55" width="7" height="0" rx="3.5" ry="3.5" fill="#dc2626"/> <circle cx="176" cy="65" r="9" fill="#dc2626" stroke="white" stroke-width="1"/> <text x="168" y="9" font-size="11" font-weight="600">°C</text> </svg>
+                        </div>
+                        <div class="mt-4"> <div class="progress-bar-container mb-2"> <div id="progress-wood" class="progress-bar" style="width: 0%;">0%</div> </div> <p class="text-sm md:text-md font-medium">درجة الحرارة: <span id="temp-wood" class="font-bold text-blue-700">20</span> °C</p> </div>
+                    </div>
+                </div>
+                <div class="text-center mt-6 space-x-2 rtl:space-x-reverse md:space-x-4"> <button id="start-experiment"> 🚀 ابدأ التسخين </button> <button id="reset-experiment" style="display: none;"> 🔄 إعادة التجربة </button> </div>
+                <p id="lab-result" class="mt-5 text-center font-semibold text-md md:text-lg text-indigo-800 h-6"></p>
+            </section>
+             <div class="step-navigation">
+                 <button class="next-step-btn" data-target="step-extra-content">متابعة ←</button>
+            </div>
+        </div>
+
+        <div id="step-extra-content" class="lesson-step">
+             <section class="section-extra">
+                <h2 class="font-bold">6. مفاهيم إضافية</h2>
+                <div class="space-y-4 md:space-y-5">
+                    <div class="p-3 md:p-4 bg-teal-100 rounded-lg border border-teal-300">
+                        <h3 class="text-lg md:text-xl font-semibold mb-2">الحرارة النوعية (Specific Heat)</h3>
+                        <p class="text-gray-700 text-sm md:text-base">هي كمية الطاقة اللازمة لرفع درجة حرارة 1 كجم من المادة درجة مئوية واحدة. الماء 💧 له حرارة نوعية عالية (يسخن ويبرد ببطء)، بينما الرمل 🏖️ له حرارة نوعية منخفضة (يسخن ويبرد بسرعة).</p>
+                    </div>
+                    <div class="p-3 md:p-4 bg-teal-100 rounded-lg border border-teal-300">
+                        <h3 class="text-lg md:text-xl font-semibold mb-2">التلوث الحراري (Thermal Pollution)</h3>
+                        <p class="text-gray-700 text-sm md:text-base">هو ارتفاع درجة حرارة المسطحات المائية بسبب إضافة ماء حار إليها (من المصانع مثلاً)، مما يضر بالحياة المائية 🐠 بتقليل الأكسجين المذاب.</p>
+                    </div>
+                </div>
+            </section>
+             <div class="step-navigation">
+                 <button class="next-step-btn" data-target="step-extra-quiz">اختبر فهمك ←</button>
+            </div>
+        </div>
+
+        <div id="step-extra-quiz" class="lesson-step">
+             <div class="quiz-step-container" data-correct="water">
+                 <p>سؤال تحقق (5/5): أي مادة تحتاج طاقة حرارية أكبر لرفع درجة حرارتها بنفس المقدار: الماء أم الرمل؟</p>
+                  <div class="options">
+                     <button value="water">الماء</button>
+                     <button value="sand">الرمل</button>
+                     <button value="same">كلاهما بنفس المقدار</button>
+                 </div>
+                 <div class="feedback"></div>
+             </div>
+             <div class="step-navigation">
+                 <button class="next-step-btn" data-target="step-final-quiz" disabled>الانتقال للاختبار النهائي ←</button>
+            </div>
+        </div>
+
+        <div id="step-final-quiz" class="lesson-step">
+             <section id="quiz" class="section-quiz">
+                <h2 class="font-bold">🎯 الاختبار النهائي</h2>
+                <p class="mb-4 text-gray-700 text-sm md:text-base">لقد تعلمت الكثير! حان الوقت لاختبار فهمك الشامل لجميع مفاهيم انتقال الحرارة.</p>
+                <form id="quiz-form" class="space-y-6 md:space-y-8 mt-6">
+                    <div class="quiz-question" data-correct="conduction">
+                        <p class="font-semibold text-md md:text-lg mb-3">1. لمس مقبض معدني ساخن ينقل الحرارة ليدك عن طريق:</p>
+                        <div class="flex flex-wrap gap-2 md:gap-3"> <input type="radio" id="fq1_opt1" name="fq1" value="conduction"> <label for="fq1_opt1">التوصيل</label> <input type="radio" id="fq1_opt2" name="fq1" value="convection"> <label for="fq1_opt2">الحمل</label> <input type="radio" id="fq1_opt3" name="fq1" value="radiation"> <label for="fq1_opt3">الإشعاع</label> </div> <div class="feedback"></div>
+                    </div>
+                    <div class="quiz-question" data-correct="radiation">
+                        <p class="font-semibold text-md md:text-lg mb-3">2. الطريقة الرئيسية لانتقال حرارة الشمس عبر الفضاء هي:</p>
+                         <div class="flex flex-wrap gap-2 md:gap-3"> <input type="radio" id="fq2_opt1" name="fq2" value="conduction"> <label for="fq2_opt1">التوصيل</label> <input type="radio" id="fq2_opt2" name="fq2" value="convection"> <label for="fq2_opt2">الحمل</label> <input type="radio" id="fq2_opt3" name="fq2" value="radiation"> <label for="fq2_opt3">الإشعاع</label> </div> <div class="feedback"></div>
+                    </div>
+                    <div class="quiz-question" data-correct="insulator">
+                        <p class="font-semibold text-md md:text-lg mb-3">3. يُعتبر الهواء مثالاً جيدًا على مادة:</p>
+                         <div class="flex flex-wrap gap-2 md:gap-3"> <input type="radio" id="fq3_opt1" name="fq3" value="conductor"> <label for="fq3_opt1">موصلة للحرارة</label> <input type="radio" id="fq3_opt2" name="fq3" value="insulator"> <label for="fq3_opt2">عازلة للحرارة</label> <input type="radio" id="fq3_opt3" name="fq3" value="fluid"> <label for="fq3_opt3">تنتقل فيها الحرارة بالحمل فقط</label> </div> <div class="feedback"></div>
+                    </div>
+                    <div class="quiz-question" data-correct="convection">
+                        <p class="font-semibold text-md md:text-lg mb-3">4. غليان الماء في قدر هو مثال واضح على انتقال الحرارة بـ:</p>
+                         <div class="flex flex-wrap gap-2 md:gap-3"> <input type="radio" id="fq4_opt1" name="fq4" value="conduction"> <label for="fq4_opt1">التوصيل</label> <input type="radio" id="fq4_opt2" name="fq4" value="convection"> <label for="fq4_opt2">الحمل</label> <input type="radio" id="fq4_opt3" name="fq4" value="radiation"> <label for="fq4_opt3">الإشعاع</label> </div> <div class="feedback"></div>
+                    </div>
+
+                    <button type="submit" id="quiz-submit-btn" class="block mx-auto"> ✅ عرض النتيجة النهائية </button>
+                     <p id="quiz-result" class="mt-5 font-semibold text-lg md:text-xl h-8 text-center"></p>
+                </form>
+             </section>
+             <div class="text-center mt-8">
+                  <p id="lesson-complete" class="text-xl md:text-2xl font-bold text-emerald-600" style="display: none;">🎉 تهانينا! لقد أكملت مقرر انتقال الحرارة بنجاح! 🎉</p>
+             </div>
+        </div>
+
+    </div>
+
+    <script>
+        const steps = document.querySelectorAll('.lesson-step');
+        const nextButtons = document.querySelectorAll('.next-step-btn');
+        const quizStepContainers = document.querySelectorAll('.quiz-step-container'); // Select quiz containers
+
+        let currentStepIndex = 0;
+
+        function showStep(index) {
+            steps.forEach((step, i) => {
+                step.classList.toggle('active-step', i === index);
+            });
+             // Scroll to top of the main container when step changes
+             document.querySelector('.main-container').scrollTo(0, 0);
+             window.scrollTo(0,0); // Also scroll window viewport to top
+        }
+
+        // Event listeners for "Next" buttons (linking content steps and enabling quiz steps)
+        nextButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetStepId = button.getAttribute('data-target');
+                steps.forEach((step, index) => {
+                    if (step.id === targetStepId) {
+                        currentStepIndex = index;
+                        showStep(currentStepIndex);
+                        return;
+                    }
+                });
+            });
+        });
+
+        // Event listeners for Mini-Quiz answers (within quiz steps)
+        quizStepContainers.forEach(quizContainer => {
+            const options = quizContainer.querySelectorAll('.options button');
+            const feedbackElement = quizContainer.querySelector('.feedback');
+            // Find the navigation container FOLLOWING this quiz container
+            const navigationDiv = quizContainer.nextElementSibling;
+            const nextButton = navigationDiv ? navigationDiv.querySelector('.next-step-btn') : null; // Get the next button for this quiz step
+            const correctAnswer = quizContainer.getAttribute('data-correct');
+
+            options.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Reset styles within this specific quiz container
+                    options.forEach(btn => {
+                        btn.classList.remove('selected', 'correct', 'wrong');
+                        btn.disabled = false;
+                    });
+                    feedbackElement.classList.remove('show', 'correct', 'wrong');
+                    feedbackElement.textContent = '';
+                    if (nextButton) nextButton.disabled = true; // Disable next initially
+
+                    option.classList.add('selected');
+                    const userAnswer = option.value;
+                    options.forEach(btn => btn.disabled = true); // Disable all options
+
+                    if (userAnswer === correctAnswer) {
+                        option.classList.add('correct');
+                        feedbackElement.textContent = '👍 إجابة صحيحة!';
+                        feedbackElement.classList.add('correct', 'show');
+                        if (nextButton) nextButton.disabled = false; // Enable next button
+                    } else {
+                        option.classList.add('wrong');
+                        feedbackElement.textContent = `❌ إجابة خاطئة. حاول مرة أخرى.`;
+                        feedbackElement.classList.add('wrong', 'show');
+                        if (nextButton) nextButton.disabled = true; // Keep next disabled
+                        // Re-enable after delay
+                        setTimeout(() => {
+                            options.forEach(btn => {
+                                btn.disabled = false;
+                                btn.classList.remove('selected', 'correct', 'wrong');
+                            });
+                            feedbackElement.classList.remove('show');
+                            feedbackElement.textContent = '';
+                        }, 2000); // Shorter delay
+                    }
+                    setTimeout(() => feedbackElement.style.opacity = '1', 100);
+                });
+            });
+        });
+
+
+        // --- المختبر الافتراضي (الكود كما هو) ---
+        const startBtn = document.getElementById('start-experiment');
+        const resetBtn = document.getElementById('reset-experiment');
+        const progressCopper = document.getElementById('progress-copper');
+        const progressWood = document.getElementById('progress-wood');
+        const tempCopperSpan = document.getElementById('temp-copper');
+        const tempWoodSpan = document.getElementById('temp-wood');
+        const thermoCopperFill = document.getElementById('thermo-copper-fill');
+        const thermoWoodFill = document.getElementById('thermo-wood-fill');
+        const labResult = document.getElementById('lab-result');
+
+        let copperInterval, woodInterval;
+        let currentTempCopper = 20; let currentTempWood = 20;
+        const maxTemp = 100; const baseTemp = 20; const thermoMaxHeight = 44; const thermoBaseY = 55;
+
+        function getProgressColor(temp) { const percentage = (temp - baseTemp) / (maxTemp - baseTemp); if (percentage < 0.33) return '#60a5fa'; if (percentage < 0.66) return '#facc15'; return '#ef4444'; }
+        function updateThermometer(element, currentTemp) { const percentage = Math.max(0, Math.min(1, (currentTemp - baseTemp) / (maxTemp - baseTemp))); const height = thermoMaxHeight * percentage; const yPos = thermoBaseY - height; element.setAttribute('height', height); element.setAttribute('y', yPos); element.setAttribute('fill', getProgressColor(currentTemp)); }
+        function updateProgressBar(element, tempSpan, currentTemp) { const percentage = Math.max(0, Math.min(100, (currentTemp - baseTemp) / (maxTemp - baseTemp) * 100)); element.style.width = percentage + '%'; element.textContent = Math.round(percentage) + '%'; tempSpan.textContent = Math.round(currentTemp); const color = getProgressColor(currentTemp); element.style.backgroundColor = color; element.style.color = percentage > 40 ? 'white' : '#1f2937'; }
+
+        function runExperiment() {
+            startBtn.disabled = true; startBtn.style.display = 'none'; resetBtn.style.display = 'inline-block'; resetBtn.disabled = true; labResult.textContent = 'التسخين جارٍ... 🔥'; completedIntervals = 0;
+            let copperTime = 0; const copperDuration = 4000; const copperUpdateInterval = 40;
+            copperInterval = setInterval(() => { copperTime += copperUpdateInterval; const progress = Math.min(100, (copperTime / copperDuration) * 100); currentTempCopper = baseTemp + (maxTemp - baseTemp) * (progress / 100); updateProgressBar(progressCopper, tempCopperSpan, currentTempCopper); updateThermometer(thermoCopperFill, currentTempCopper); if (progress >= 100) { clearInterval(copperInterval); checkCompletion(); } }, copperUpdateInterval);
+            let woodTime = 0; const woodDuration = 12000; const woodMaxTemp = 45; const woodUpdateInterval = 40;
+            woodInterval = setInterval(() => { woodTime += woodUpdateInterval; const timeProgress = Math.min(100, (woodTime / woodDuration) * 100); currentTempWood = baseTemp + (woodMaxTemp - baseTemp) * (timeProgress / 100); updateProgressBar(progressWood, tempWoodSpan, currentTempWood); updateThermometer(thermoWoodFill, currentTempWood); if (timeProgress >= 100) { clearInterval(woodInterval); checkCompletion(); } }, woodUpdateInterval);
+        }
+        let completedIntervals = 0;
+        function checkCompletion() { completedIntervals++; if (completedIntervals >= 2) { labResult.textContent = 'اكتمل السباق! 🏆 النحاس فاز بفارق كبير!'; resetBtn.disabled = false; } }
+        function resetExperiment() { clearInterval(copperInterval); clearInterval(woodInterval); completedIntervals = 0; currentTempCopper = baseTemp; currentTempWood = baseTemp; updateProgressBar(progressCopper, tempCopperSpan, baseTemp); updateThermometer(thermoCopperFill, baseTemp); updateProgressBar(progressWood, tempWoodSpan, baseTemp); updateThermometer(thermoWoodFill, baseTemp); labResult.textContent = ''; startBtn.disabled = false; resetBtn.style.display = 'none'; startBtn.style.display = 'inline-block'; }
+        // Ensure event listeners are only added if the elements exist (they are in the lab step)
+        if(startBtn) startBtn.addEventListener('click', runExperiment);
+        if(resetBtn) resetBtn.addEventListener('click', resetExperiment);
+
+
+       // --- الاختبار النهائي (الكود كما هو) ---
+        const quizForm = document.getElementById('quiz-form');
+        const quizResult = document.getElementById('quiz-result');
+        const submitButton = document.getElementById('quiz-submit-btn');
+        const lessonCompleteMessage = document.getElementById('lesson-complete');
+
+        if(quizForm) {
+            quizForm.addEventListener('submit', function(event) {
+                event.preventDefault(); submitButton.disabled = true; lessonCompleteMessage.style.display = 'none';
+                const questions = quizForm.querySelectorAll('.quiz-question'); let score = 0; let allAnswered = true;
+                questions.forEach((question, index) => {
+                    const correctAnswer = question.dataset.correct; const selectedAnswerInput = question.querySelector(`input[name="fq${index + 1}"]:checked`); const feedbackElement = question.querySelector('.feedback'); const labels = question.querySelectorAll('label'); const radioButtons = question.querySelectorAll('input[type="radio"]');
+                    labels.forEach(label => { label.classList.remove('correct-answer', 'wrong-answer', 'opacity-50', 'border-2', 'border-emerald-500'); }); radioButtons.forEach(rb => rb.disabled = false); feedbackElement.textContent = ''; feedbackElement.classList.remove('correct', 'wrong', 'show'); setTimeout(() => feedbackElement.style.opacity = '0', 50);
+                    if (selectedAnswerInput) {
+                        const userAnswer = selectedAnswerInput.value; const userLabel = question.querySelector(`label[for="${selectedAnswerInput.id}"]`);
+                        radioButtons.forEach(rb => rb.disabled = true); labels.forEach(label => { if (label !== userLabel) label.classList.add('opacity-50'); });
+                        if (userAnswer === correctAnswer) { score++; userLabel.classList.add('correct-answer'); feedbackElement.textContent = '👍'; feedbackElement.classList.add('correct'); }
+                        else { userLabel.classList.add('wrong-answer'); const correctLabel = question.querySelector(`input[value="${correctAnswer}"] + label`); feedbackElement.textContent = `❌ الصحيحة: ${correctLabel.textContent}`; feedbackElement.classList.add('wrong'); if(correctLabel) { correctLabel.classList.remove('opacity-50'); correctLabel.classList.add('border-2', 'border-emerald-500'); } }
+                        feedbackElement.classList.add('show'); setTimeout(() => feedbackElement.style.opacity = '1', 100);
+                    } else { allAnswered = false; feedbackElement.textContent = '🤔 اختر إجابة'; feedbackElement.classList.add('wrong', 'show'); setTimeout(() => feedbackElement.style.opacity = '1', 100); }
+                });
+                if (allAnswered) { let resultMessage = `النتيجة النهائية: ${score} من ${questions.length}. `; if (score === questions.length) { resultMessage += "🎉 ممتاز!"; quizResult.style.color = '#059669'; lessonCompleteMessage.style.display = 'block'; } else if (score >= questions.length / 2) { resultMessage += "👍 جيد!"; quizResult.style.color = '#0369a1'; } else { resultMessage += "💡 حاول مراجعة الدرس!"; quizResult.style.color = '#a16207'; } quizResult.textContent = resultMessage; }
+                else { quizResult.textContent = 'الرجاء الإجابة على جميع الأسئلة.'; quizResult.style.color = '#dc2626'; submitButton.disabled = false; }
+            });
+        }
+
+        // Initialize first step
+        document.addEventListener('DOMContentLoaded', () => {
+            showStep(0);
+        });
+
+    </script>
+
+</body>
+</html>
